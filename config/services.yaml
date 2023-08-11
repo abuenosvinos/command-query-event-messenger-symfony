@@ -1,0 +1,54 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    emailAdmin: '%env(EMAIL_ADMIN)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            '$emailAdmin': '%emailAdmin%'
+
+    _instanceof:
+        App\Event\Domain\Bus\Command\CommandHandler:
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
+
+        App\Event\Domain\Bus\Query\QueryHandler:
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }
+
+        App\Event\Domain\Bus\Event\EventHandler:
+            tags:
+                - { name: messenger.message_handler, bus: event.bus }
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/App/Domain/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    App\Data\Infrastructure\UI\Controller\:
+        resource: '../src/Data/Infrastructure/UI/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Finance\Infrastructure\UI\Controller\:
+        resource: '../src/Finance/Infrastructure/UI/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Store\Infrastructure\UI\Controller\:
+        resource: '../src/Store/Infrastructure/UI/Controller/'
+        tags: ['controller.service_arguments']
+
+    App\Warehouse\Infrastructure\UI\Controller\:
+        resource: '../src/Warehouse/Infrastructure/UI/Controller/'
+        tags: ['controller.service_arguments']

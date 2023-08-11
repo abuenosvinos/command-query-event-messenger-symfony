@@ -1,0 +1,51 @@
+
+home:
+    path: /
+    controller: App\Data\Infrastructure\UI\Controller\HomeController::index
+
+# Finance
+
+finance-product-list:
+    path: /finance/product
+    controller: App\Finance\Infrastructure\UI\Controller\Product\ProductListController::index
+
+finance-account-book-list:
+    path: /finance/account-book
+    controller: App\Finance\Infrastructure\UI\Controller\AccountBook\AccountBookListController::index
+
+finance-request-list:
+    path: /finance/request
+    controller: App\Finance\Infrastructure\UI\Controller\Request\RequestListController::index
+
+# Warehouse
+
+warehouse-product-list:
+    path: /warehouse/product
+    controller: App\Warehouse\Infrastructure\UI\Controller\Product\ProductListController::index
+
+warehouse-request-list:
+    path: /warehouse/request
+    controller: App\Warehouse\Infrastructure\UI\Controller\Request\RequestListController::index
+
+# Store
+
+store-product-list:
+    path: /store/product
+    controller: App\Store\Infrastructure\UI\Controller\Product\ProductListController::index
+
+# Users
+
+user-list:
+    path: /user
+    controller: App\Data\Infrastructure\UI\Controller\User\UserListController::index
+
+user-item:
+    path: /user/{id}
+    controller: App\Data\Infrastructure\UI\Controller\User\UserItemController::index
+
+# LogBook
+
+data-logbook-list:
+    path: /data/logbook
+    controller: App\Data\Infrastructure\UI\Controller\LogBook\LogBookListController::index
+

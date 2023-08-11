@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Error{% endblock %}
+
+{% block body %}
+    <section class="container--page">
+        <section class="page container">
+            <h1>Error 404 Page not found</h1>
+
+            <h3>UPS!! La página a la que intentas acceder no es correcta o ya no existe, prueba a acceder desde este enlace <a href="{{ path('home') }}">Ir a la home</a></h3>
+        </section>
+    </section>
+{% endblock %}

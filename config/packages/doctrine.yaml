@@ -1,0 +1,88 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        charset: 'utf8'
+        schema_filter: '~^(?!messenger_messages)~'
+        types:
+            uuid: 'App\Shared\Infrastructure\Persistence\Doctrine\Type\UuidType'
+
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        #server_version: '15'
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        # We have to change the "doctrine/doctrine-bundle" vendor because of https://github.com/doctrine/DoctrineBundle/issues/1643
+        #report_fields_where_declared: true
+        #validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App\Shared\Domain\ValueObject:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Shared/Infrastructure/Persistence/Doctrine/mappingVO'
+                prefix: 'App\Shared\Domain\ValueObject'
+                alias: App\Shared\Domain\ValueObject
+            App\Data\Domain\Entity:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Data/Infrastructure/Persistence/Doctrine/mapping'
+                prefix: 'App\Data\Domain\Entity'
+                alias: App\Data\Domain\Entity
+            App\Store\Domain\Entity:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Store/Infrastructure/Persistence/Doctrine/mapping'
+                prefix: 'App\Store\Domain\Entity'
+                alias: App\Store\Domain\Entity
+            App\Finance\Domain\Entity:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Finance/Infrastructure/Persistence/Doctrine/mapping'
+                prefix: 'App\Finance\Domain\Entity'
+                alias: App\Finance\Domain\Entity
+            App\Finance\Domain\ValueObject:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Finance/Infrastructure/Persistence/Doctrine/mappingVO'
+                prefix: 'App\Finance\Domain\ValueObject'
+                alias: App\Finance\Domain\ValueObject
+            App\Warehouse\Domain\Entity:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Warehouse/Infrastructure/Persistence/Doctrine/mapping'
+                prefix: 'App\Warehouse\Domain\Entity'
+                alias: App\Warehouse\Domain\Entity
+            App\Warehouse\Domain\ValueObject:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Warehouse/Infrastructure/Persistence/Doctrine/mappingVO'
+                prefix: 'App\Warehouse\Domain\ValueObject'
+                alias: App\Warehouse\Domain\ValueObject
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

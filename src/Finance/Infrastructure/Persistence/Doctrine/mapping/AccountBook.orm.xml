@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Finance\Domain\Entity\AccountBook" table="finance_account_book">
+    <id name="id" type="uuid" column="id">
+      <generator strategy="CUSTOM"/>
+      <custom-id-generator class="App\Shared\Infrastructure\Persistence\Doctrine\UuidGenerator"/>
+    </id>
+
+    <embedded name="operation" class="App\Finance\Domain\ValueObject\Operation" use-column-prefix="false" />
+    <many-to-one field="product" target-entity="App\Finance\Domain\Entity\Product">
+      <join-column name="product_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />
+    </many-to-one>
+    <field name="quantity" type="integer" nullable="false" />
+    <field name="price" type="integer" nullable="false" />
+
+
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+
+  </entity>
+</doctrine-mapping>

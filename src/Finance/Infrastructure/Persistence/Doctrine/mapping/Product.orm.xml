@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Finance\Domain\Entity\Product" table="finance_product">
+    <id name="id" type="uuid" column="id">
+      <generator strategy="CUSTOM"/>
+      <custom-id-generator class="App\Shared\Infrastructure\Persistence\Doctrine\UuidGenerator"/>
+    </id>
+
+    <field name="code" length="255" nullable="false" unique="true" />
+    <field name="name" length="255" nullable="false" />
+    <field name="slug" length="155" nullable="true" unique="true">
+      <gedmo:slug unique="true" style="default" updatable="true" separator="-" fields="name" />
+    </field>
+    <field name="purchasePrice" type="integer" nullable="false" />
+    <field name="salePrice" type="integer" nullable="false" />
+
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+
+  </entity>
+</doctrine-mapping>

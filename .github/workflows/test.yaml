@@ -1,0 +1,34 @@
+name: 💅 PHP Tests
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: 💅 PHP Tests
+    steps:
+      - name: 👍 Checkout
+        uses: actions/checkout@v2
+
+      - name: Get information
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: |
+          echo "Workflow: from ${{ github.workflow }} triggered by the ${{ github.event_name }} done by ${{ github.actor }}"
+          echo "Event Name: ${{ github.event_name }}"
+          echo "User: ${{ github.actor }}"
+          echo "Job Context: $JOB_CONTEXT"
+          echo "Done!"
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.composer
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: 📥 Install Dependencies
+        run: make install
+
+      - name: 💅 Test
+        run: make test

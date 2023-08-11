@@ -1,0 +1,113 @@
+framework:
+    messenger:
+        failure_transport: failed
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
+            symfony_serializer:
+                format: json
+                context: { 'groups': '*'}
+
+        transports:
+            # https://symfony.com/doc/current/messenger.html#transport-configuration
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_ASYNC_DSN)%'
+                options:
+                    auto_setup: true
+                    # Only valid for ampq transporter
+                    exchange:
+                        name: exchange_async
+                        type: topic
+                        default_publish_routing_key: urgent
+                    queues:
+                        queue_async_normal:
+                            binding_keys: [normal]
+                        queue_async_urgent:
+                            binding_keys: [urgent]
+                        queue_async_by_name: # not used in this project but it could be an example
+                            binding_keys: [App\Finance\Domain\Event\Product\ProductCreated]
+                retry_strategy:
+                    max_retries: 3
+                    # milliseconds delay
+                    delay: 1000
+                    # causes the delay to be higher before each retry
+                    # e.g. 1 second delay, 2 seconds, 4 seconds
+                    multiplier: 2
+                    max_delay: 0
+                    # override all of this with a service that
+                    # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
+                    # service: null
+            #sync: 'sync://'
+            async_low:
+                dsn: '%env(MESSENGER_TRANSPORT_ASYNC_DSN)%'
+                options:
+                    auto_setup: true
+                    # Only valid for ampq transporter
+                    exchange:
+                        name: exchange_async_low
+                        type: topic
+                        default_publish_routing_key: normal
+                    queues:
+                        queue_async_low:
+                            binding_keys: [ normal ]
+                retry_strategy:
+                    max_retries: 3
+                    # milliseconds delay
+                    delay: 1000
+                    # causes the delay to be higher before each retry
+                    # e.g. 1 second delay, 2 seconds, 4 seconds
+                    multiplier: 2
+                    max_delay: 0
+                    # override all of this with a service that
+                    # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
+                    # service: null
+            #sync: 'sync://'
+            sync:
+                dsn: '%env(MESSENGER_TRANSPORT_SYNC_DSN)%'
+#                options:
+#                    use_notify: true # Not for Redis
+#                    check_delayed_interval: 60000 # Not for Redis
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            # serializer json for SendEmailMessage doesn't work, we need another serializer (and isolation in a different transport)
+            # https://github.com/symfony/symfony/issues/33394
+            # https://github.com/symfony/symfony/issues/42857
+            # https://github.com/symfony/symfony/pull/38433
+            notifications: 'sync://'
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_FAILED_DSN)%'
+                options:
+                    auto_setup: true
+                    queue_name: failed
+
+        routing:
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: notifications
+            Symfony\Component\Notifier\Message\ChatMessage: notifications
+            Symfony\Component\Notifier\Message\SmsMessage: notifications
+            Symfony\Component\Notifier\Message\PushMessage: notifications
+            App\Data\Domain\Event\LogBook: async_low
+            App\Event\Domain\Bus\Event\Event: async
+
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - validation
+                    - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
+                    #- App\Event\Infrastructure\Messenger\Middleware\DispatchEvents
+                    - dispatch_after_current_bus # https://symfony.com/doc/current/messenger/dispatch_after_current_bus.html
+                    - doctrine_transaction
+
+            query.bus:
+                middleware:
+                    - validation
+                    - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
+                    #- App\Event\Infrastructure\Messenger\Middleware\DispatchEvents
+
+            event.bus:
+                default_middleware:
+                    allow_no_handlers: false
+                middleware:
+                    - router_context # if you need to generate absolute URLs in the consumer (e.g. render a template with links, emails)
+                    - validation
+                    - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
