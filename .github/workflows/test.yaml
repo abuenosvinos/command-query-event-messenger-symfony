@@ -32,8 +32,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: 📥 Install Dependencies
+      - name: Start docker instances
+        run: make start
+
+      - name: Install Dependencies
         run: make install
 
-      - name: 💅 Test
+      - name: Test
         run: make test
