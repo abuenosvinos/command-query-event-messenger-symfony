@@ -1,17 +1,14 @@
 
 ## Introduction
-***
 
 This project is a practice for CQRS and Event Driven Development using some great tools.
 
 ## Requirements
-***
 
 - Docker
 - Make (If you don't have make, you can execute the same commands inside the Makefile)
 
 ## Preparation
-***
 
 `make start`
 
@@ -20,12 +17,10 @@ This project is a practice for CQRS and Event Driven Development using some grea
 `make create-db`
 
 ## Test
-***
 
 `make test`
 
 ## CQRS + Event Driven Development
-***
 
 ### Code in `src/Event`
 
@@ -110,7 +105,6 @@ If you make a look to `EventBus`, `EventOptions` and `SymfonyEventConfiguration`
 - routing; referer to the binding_keys in the `messenger.yaml` file to choose a queue
 
 ## Application
-***
 
 > Our application is about a store who sell products which are provided from a warehouse and a Finance department who buy those products.<br/>
 > We have 5 Bounded Context, 3 of business nature and 2 of technical nature.<br/>
@@ -151,7 +145,6 @@ We have only one Entity:
 - Product; represent the product from the point of view of the Store department; Code, stock, price.
 
 ## Execution
-***
 
 > There are three commands where you can manage the application. As a practice you can do these three actions using an API.
 
@@ -196,7 +189,6 @@ bin/console messenger:consume async async_low
 On http://localhost/ you can navigate through the information generated for you and the application
 
 ## Next Steps
-***
 
 - Add an implementation for Laravel
 - Add the concept of Store to manage more than one
@@ -206,7 +198,6 @@ On http://localhost/ you can navigate through the information generated for you 
 - API to manage the application
 
 ## References
-***
 
 - https://symfony.com/doc/current/messenger.html
 - https://www.doctrine-project.org/
