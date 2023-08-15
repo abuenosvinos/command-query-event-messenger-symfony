@@ -205,4 +205,5 @@ On http://localhost/ you can navigate through the information generated for you 
 - https://tailwindcss.com/docs/guides/symfony
 - https://www.rabbitmq.com
 - https://redis.io
+- https://github.com/CodelyTV/php-ddd-example
 - https://www.jetbrains.com/help/phpstorm/zero-configuration-debugging-cli.html
