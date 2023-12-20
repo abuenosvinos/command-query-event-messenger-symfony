@@ -48,6 +48,9 @@ static-analysis:
 #	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --output-format=github --shepherd
 	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --shepherd --show-info=true
 
+lint:
+	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/ecs check
+
 clean-cache: ## Clear the cache
 	@rm -rf apps/*/*/var
 	@docker exec -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./bin/console cache:warmup
