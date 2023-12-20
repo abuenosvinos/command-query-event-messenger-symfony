@@ -7,7 +7,6 @@ namespace App\Shared\Infrastructure\Persistence\Doctrine;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Exception\NotSupported;
 
 abstract class DoctrineRepository
 {

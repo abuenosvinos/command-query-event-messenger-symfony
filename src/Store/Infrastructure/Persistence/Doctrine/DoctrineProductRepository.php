@@ -6,7 +6,6 @@ namespace App\Store\Infrastructure\Persistence\Doctrine;
 
 use App\Shared\Application\Paginator;
 use App\Shared\Domain\Criteria\Criteria;
-use App\Shared\Domain\Criteria\Order;
 use App\Shared\Domain\ValueObject\Uuid;
 use App\Shared\Infrastructure\Persistence\Doctrine\DoctrineCriteriaConverter;
 use App\Shared\Infrastructure\Persistence\Doctrine\DoctrineRepository;
