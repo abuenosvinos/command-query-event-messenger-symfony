@@ -16,9 +16,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class CreateUserCommand extends Command
 {
-    private SymfonyStyle $io;
+    private ?SymfonyStyle $io = null;
 
-    public function __construct(private CommandBus $commandBus)
+    public function __construct(private readonly CommandBus $commandBus)
     {
         parent::__construct();
     }
@@ -47,19 +47,19 @@ class CreateUserCommand extends Command
     {
         $email = $input->getArgument('email');
 
-        try {
-            $this->commandBus->dispatch(new \App\Data\Application\User\CreateUser\CreateUserCommand($email));
-        } catch (NotValidEmailAddressException $exception) {
-            $this->io->error("An error happened: " . $exception->getMessage());
+//        try {
+//            $this->commandBus->dispatch(new \App\Data\Application\User\CreateUser\CreateUserCommand($email));
+//        } catch (NotValidEmailAddressException $exception) {
+//            $this->io?->error("An error happened: " . $exception->getMessage());
+//
+//            return Command::FAILURE;
+//        } catch (\Exception $exception) {
+//            $this->io?->error("An error happened: " . $exception->getMessage());
+//
+//            return Command::FAILURE;
+//        }
 
-            return Command::FAILURE;
-        } catch (\Exception $exception) {
-            $this->io->error("An error happened: " . $exception->getMessage());
-
-            return Command::FAILURE;
-        }
-
-        $this->io->success("The user was created");
+        $this->io?->success("The user was created");
 
         return Command::SUCCESS;
     }

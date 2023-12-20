@@ -37,7 +37,7 @@ class SymfonyEventBus implements EventBus
         } catch (NoHandlerForMessageException) {
             throw new EventNotRegisteredError($event);
         } catch (HandlerFailedException $exception) {
-            throw $exception->getPrevious();
+            ($exception->getPrevious()) ? throw $exception->getPrevious() : throw $exception;
         }
     }
 }

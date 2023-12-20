@@ -5,23 +5,27 @@ declare(strict_types=1);
 namespace App\Shared\Application;
 
 use ArrayIterator;
+use Traversable;
 
 class Paginator
 {
-    private ArrayIterator $results;
+    private Traversable $results;
     private int $total;
     private int $offset;
     private int $limit;
 
-    public function __construct(ArrayIterator $results, int $total, ?int $offset, ?int $limit)
+    /*
+     * @param ArrayIterator<int, mixed> $results
+     */
+    public function __construct(Traversable $results, int $total, ?int $offset, ?int $limit)
     {
         $this->results = $results;
         $this->total = $total;
-        $this->offset = ($offset) ? $offset : 0;
-        $this->limit = ($limit) ? $limit : $total;
+        $this->offset = ($offset) ?: 0;
+        $this->limit = ($limit) ?: $total;
     }
 
-    public function results(): ArrayIterator
+    public function results(): Traversable
     {
         return $this->results;
     }

@@ -26,6 +26,10 @@ final class ProductRequestedByWarehouseEventHandler implements EventHandler
     {
         $product = $this->productRepository->findByCode($event->code());
 
+        if (!$product) {
+            throw new \DomainException("No product found");
+        }
+
         $request = new Request();
         $request->setProduct($product);
         $request->setQuantity($event->quantity());

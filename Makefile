@@ -44,6 +44,10 @@ test: ## Run the tests
 	docker exec -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php /var/www/html/composer.phar check-style
 	docker exec -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php /var/www/html/composer.phar run-unit-tests
 
+static-analysis:
+#	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --output-format=github --shepherd
+	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --shepherd --show-info=true
+
 clean-cache: ## Clear the cache
 	@rm -rf apps/*/*/var
 	@docker exec -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./bin/console cache:warmup

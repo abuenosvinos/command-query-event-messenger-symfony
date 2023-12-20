@@ -28,7 +28,7 @@ class SymfonyCommandBus implements CommandBus
         } catch (NoHandlerForMessageException) {
             throw new CommandNotRegisteredError($command);
         } catch (HandlerFailedException $exception) {
-            throw $exception->getPrevious();
+            ($exception->getPrevious()) ? throw $exception->getPrevious() : throw $exception;
         }
     }
 }

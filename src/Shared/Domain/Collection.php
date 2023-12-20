@@ -7,22 +7,24 @@ namespace App\Shared\Domain;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Traversable;
 
+/** @template-implements IteratorAggregate<mixed>*/
 abstract class Collection implements Countable, IteratorAggregate
 {
-    public function __construct(private array $items)
+    public function __construct(private readonly array $items)
     {
         Assert::arrayOf($this->type(), $items);
     }
 
     abstract protected function type(): string;
 
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items());
     }
 
-    public function count(): int
+    final public function count(): int
     {
         return \count($this->items());
     }

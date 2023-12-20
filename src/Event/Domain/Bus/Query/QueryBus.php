@@ -6,5 +6,5 @@ namespace App\Event\Domain\Bus\Query;
 
 interface QueryBus
 {
-    public function ask(Query $query);//: ?Response;
+    public function ask(Query $query): mixed;//: ?Response;
 }

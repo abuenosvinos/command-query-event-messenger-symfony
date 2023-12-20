@@ -20,7 +20,7 @@ class LogBookEventHandler implements EventHandler
     public function __invoke(LogBookEvent $event): void
     {
         $logBook = new LogBook();
-        $logBook->setAction($event->action());
+        $logBook->setAction($event->action() ?: '');
         $logBook->setOccurredOn(new \DateTime($event->occurredOn()));
         $logBook->setObjectType($event->objectType());
         $logBook->setObjectId($event->objectId());
@@ -29,8 +29,9 @@ class LogBookEventHandler implements EventHandler
             $logBook->setMetadata(json_encode($data));
         }
 
-        if ($event->email()) {
-            $user = $this->userRepository->findByEmail(EmailAddress::create($event->email()));
+        $email = $event->email();
+        if ($email !== null) {
+            $user = $this->userRepository->findByEmail(EmailAddress::create($email));
             if ($user) {
                 $logBook->setUser($user);
             }

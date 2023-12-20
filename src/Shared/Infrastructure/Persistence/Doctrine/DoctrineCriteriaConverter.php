@@ -115,7 +115,7 @@ final class DoctrineCriteriaConverter
         };
     }
 
-    private function mapFieldValue(FilterField $field)
+    private function mapFieldValue(FilterField $field): mixed
     {
         return array_key_exists($field->value(), $this->criteriaToDoctrineFields)
             ? $this->criteriaToDoctrineFields[$field->value()]
@@ -131,19 +131,19 @@ final class DoctrineCriteriaConverter
         return [$this->mapOrderBy($this->criteria->order()->orderBy()) => $this->criteria->order()->orderType()];
     }
 
-    private function mapOrderBy(OrderBy $field)
+    private function mapOrderBy(OrderBy $field): mixed
     {
         return array_key_exists($field->value(), $this->criteriaToDoctrineFields)
             ? $this->criteriaToDoctrineFields[$field->value()]
             : $field->value();
     }
 
-    private function existsHydratorFor($field): bool
+    private function existsHydratorFor(mixed $field): bool
     {
         return array_key_exists($field, $this->hydrators);
     }
 
-    private function hydrate($field, mixed $value)
+    private function hydrate(mixed $field, mixed $value): mixed
     {
         return $this->hydrators[$field]($value);
     }

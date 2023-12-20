@@ -57,6 +57,9 @@
         "ext-xdebug": "*",
         "behat/behat": "^3.13",
         "phpunit/phpunit": "^9.5",
+        "psalm/plugin-mockery": "^1.1",
+        "psalm/plugin-phpunit": "^0.18.4",
+        "psalm/plugin-symfony": "^5.1",
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/browser-kit": "6.2.*",
         "symfony/css-selector": "6.2.*",
@@ -64,7 +67,8 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^6.2",
         "symfony/stopwatch": "6.2.*",
-        "symfony/web-profiler-bundle": "6.2.*"
+        "symfony/web-profiler-bundle": "6.2.*",
+        "vimeo/psalm": "^5.18"
     },
     "config": {
         "allow-plugins": {

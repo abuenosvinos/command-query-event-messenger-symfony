@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class PurchaseProductCommand extends Command
 {
-    private SymfonyStyle $io;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         private readonly CommandBus $commandBus,
@@ -51,6 +51,7 @@ class PurchaseProductCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $code = $input->getArgument('code');
+        /** @var int $quantity */
         $quantity = $input->getArgument('quantity');
 
         try {
@@ -58,7 +59,7 @@ class PurchaseProductCommand extends Command
                 new SaleProductCommand($code, $quantity)
             );
 
-            $this->io->success('The purchase was correct');
+            $this->io?->success('The purchase was correct');
 
             return Command::SUCCESS;
         } catch (\DomainException $e) {
@@ -69,7 +70,7 @@ class PurchaseProductCommand extends Command
                 )
             );
 
-            $this->io->error($e->getMessage());
+            $this->io?->error($e->getMessage());
 
             return Command::FAILURE;
         }

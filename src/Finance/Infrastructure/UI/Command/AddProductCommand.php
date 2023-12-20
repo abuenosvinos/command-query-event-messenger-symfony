@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AddProductCommand extends Command
 {
-    private SymfonyStyle $io;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(private readonly CommandBus $commandBus)
     {
@@ -50,11 +50,13 @@ class AddProductCommand extends Command
     {
         $code = $input->getArgument('code');
         $name = $input->getArgument('name');
+        /** @var int $purchasePrice */
         $purchasePrice = $input->getArgument('purchasePrice');
+        /** @var int $salePrice */
         $salePrice = $input->getArgument('salePrice');
 
         if ($purchasePrice >= $salePrice) {
-            $this->io->error('The purchase price can\'t be greater than the sale price');
+            $this->io?->error('The purchase price can\'t be greater than the sale price');
             return Command::FAILURE;
         }
 
@@ -62,7 +64,7 @@ class AddProductCommand extends Command
             new CreateProductCommand($code, $name, $purchasePrice, $salePrice)
         );
 
-        $this->io->success('The product has been added');
+        $this->io?->success('The product has been added');
 
         return Command::SUCCESS;
     }

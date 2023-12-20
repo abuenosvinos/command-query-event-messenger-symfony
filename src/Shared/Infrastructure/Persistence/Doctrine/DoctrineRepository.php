@@ -6,15 +6,13 @@ namespace App\Shared\Infrastructure\Persistence\Doctrine;
 
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\NotSupported;
 
 abstract class DoctrineRepository
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     protected function entityManager(): EntityManagerInterface
@@ -34,7 +32,14 @@ abstract class DoctrineRepository
         $this->entityManager->flush();
     }
 
-    protected function repository(string $entityClass): ObjectRepository
+    /**
+     * @template T of object
+     *
+     * @psalm-param class-string<T> $entityClass
+     *
+     * @psalm-return EntityRepository<T>
+     */
+    protected function repository(string $entityClass): EntityRepository
     {
         return $this->entityManager->getRepository($entityClass);
     }

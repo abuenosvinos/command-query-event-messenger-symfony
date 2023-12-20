@@ -10,11 +10,11 @@ use App\Finance\Domain\Repository\ProductRepository;
 class GetProductQueryHandler implements QueryHandler
 {
     public function __construct(
-        private ProductRepository $productRepository
+        private readonly ProductRepository $productRepository
     ) {
     }
 
-    public function __invoke(GetProductQuery $query): Product
+    public function __invoke(GetProductQuery $query): ?Product
     {
         return $this->productRepository->findById(Uuid::create($query->uuid()));
     }

@@ -27,14 +27,14 @@ class SymfonyQueryBus implements QueryBus
     /**
      * @throws Throwable
      */
-    public function ask(Query $query)//: ?Response
+    public function ask(Query $query): mixed //: ?Response
     {
         try {
             return $this->handleQuery($query);
         } catch (NoHandlerForMessageException) {
             throw new QueryNotRegisteredError($query);
         } catch (HandlerFailedException $exception) {
-            throw $exception->getPrevious();
+            ($exception->getPrevious()) ? throw $exception->getPrevious() : throw $exception;
         }
     }
 }

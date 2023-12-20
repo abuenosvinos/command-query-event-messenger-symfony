@@ -13,7 +13,7 @@ class LogBook extends Event
         private readonly ?string $objectId,
         ?array $data = []
     ) {
-        parent::__construct($data);
+        parent::__construct($data ?: []);
     }
 
     public function action(): ?string

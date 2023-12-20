@@ -21,7 +21,7 @@ class Operation extends Enum
         self::SALE => 'Sale',
     ];
 
-    protected function throwExceptionForInvalidValue($value)
+    protected function throwExceptionForInvalidValue(mixed $value): void
     {
         throw new InvalidArgumentException(sprintf('The operation <%s> is invalid', $value));
     }

@@ -15,9 +15,9 @@ abstract class MixedValueObject
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->value();
+        return (string)$this->value();
     }
 
     public static function create(mixed $value): static

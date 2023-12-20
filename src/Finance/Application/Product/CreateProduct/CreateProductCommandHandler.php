@@ -4,7 +4,6 @@ namespace App\Finance\Application\Product\CreateProduct;
 
 use App\Event\Domain\Bus\Command\CommandHandler;
 use App\Event\Domain\Bus\Event\EventBus;
-use App\Event\Domain\Bus\Event\EventOptions;
 use App\Finance\Domain\Entity\Product;
 use App\Finance\Domain\Event\Product\ProductCreated;
 use App\Finance\Domain\Repository\ProductRepository;
@@ -12,8 +11,8 @@ use App\Finance\Domain\Repository\ProductRepository;
 class CreateProductCommandHandler implements CommandHandler
 {
     public function __construct(
-        private ProductRepository $productRepository,
-        private EventBus $eventBus
+        private readonly ProductRepository $productRepository,
+        private readonly EventBus $eventBus
     ) {
     }
 

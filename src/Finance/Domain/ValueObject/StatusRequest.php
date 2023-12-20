@@ -21,7 +21,7 @@ class StatusRequest extends Enum
         self::SENT => 'Sent',
     ];
 
-    protected function throwExceptionForInvalidValue($value)
+    protected function throwExceptionForInvalidValue(mixed $value): void
     {
         throw new InvalidArgumentException(sprintf('The Status Request <%s> is invalid', $value));
     }

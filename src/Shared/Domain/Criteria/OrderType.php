@@ -23,7 +23,7 @@ final class OrderType extends Enum
         return $this->equals(self::none());
     }
 
-    protected function throwExceptionForInvalidValue($value): void
+    protected function throwExceptionForInvalidValue(mixed $value): void
     {
         throw new InvalidArgumentException($value);
     }

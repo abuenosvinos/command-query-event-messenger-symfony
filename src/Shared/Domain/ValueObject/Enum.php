@@ -13,14 +13,14 @@ abstract class Enum
     protected static array $cache = [];
     protected static array $DATA = [];
 
-    public function __construct(protected $value)
+    public function __construct(protected mixed $value)
     {
         $this->ensureIsBetweenAcceptedValues($value);
     }
 
-    abstract protected function throwExceptionForInvalidValue($value);
+    abstract protected function throwExceptionForInvalidValue(mixed $value): void;
 
-    public static function __callStatic(string $name, $args)
+    public static function __callStatic(string $name, array $args)
     {
         return new static(self::values()[$name]);
     }
@@ -48,15 +48,15 @@ abstract class Enum
 
     protected static function keysFormatter(): callable
     {
-        return static fn($unused, string $key): string => strtolower($key);
+        return static fn(mixed $unused, string $key): string => strtolower($key);
     }
 
-    public function value()
+    public function value(): mixed
     {
         return $this->value;
     }
 
-    public function data()
+    public function data(): mixed
     {
         return static::$DATA[$this->value];
     }
@@ -71,14 +71,14 @@ abstract class Enum
         return (string) $this->value();
     }
 
-    private function ensureIsBetweenAcceptedValues($value): void
+    private function ensureIsBetweenAcceptedValues(mixed $value): void
     {
         if (!in_array($value, static::values(), true)) {
             $this->throwExceptionForInvalidValue($value);
         }
     }
 
-    public static function create($value): static
+    public static function create(mixed $value): static
     {
         return new static($value);
     }

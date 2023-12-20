@@ -6,7 +6,7 @@ namespace App\Shared\Domain\ValueObject;
 
 abstract class FloatValueObject
 {
-    protected function __construct(protected float $value)
+    final protected function __construct(protected float $value)
     {
     }
 

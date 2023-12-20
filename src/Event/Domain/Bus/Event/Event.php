@@ -40,7 +40,7 @@ abstract class Event extends Request
         return $this->occurredOn;
     }
 
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $attributeName = $method;
         if (str_starts_with($method, 'is')) {

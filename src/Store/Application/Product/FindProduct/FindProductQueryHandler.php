@@ -13,7 +13,7 @@ class FindProductQueryHandler implements QueryHandler
     ) {
     }
 
-    public function __invoke(FindProductQuery $query): Product
+    public function __invoke(FindProductQuery $query): ?Product
     {
         return $this->productRepository->findByCode($query->code());
     }

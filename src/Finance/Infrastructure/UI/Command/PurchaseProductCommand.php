@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class PurchaseProductCommand extends Command
 {
-    private SymfonyStyle $io;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(private readonly CommandBus $commandBus)
     {
@@ -47,13 +47,14 @@ class PurchaseProductCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $code = $input->getArgument('code');
+        /** @var int $quantity */
         $quantity = $input->getArgument('quantity');
 
         $this->commandBus->dispatch(
             new BuyProductCommand($code, $quantity)
         );
 
-        $this->io->success('The product has been bought');
+        $this->io?->success('The product has been bought');
 
         return Command::SUCCESS;
     }

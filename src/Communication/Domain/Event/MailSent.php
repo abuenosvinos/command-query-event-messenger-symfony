@@ -11,7 +11,7 @@ class MailSent extends Event
         private readonly ?string $who = null,
         ?array $data = []
     ) {
-        parent::__construct($data);
+        parent::__construct($data ?: []);
     }
 
     public function what(): string
