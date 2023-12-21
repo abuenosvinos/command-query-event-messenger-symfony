@@ -6,5 +6,8 @@ namespace App\Event\Domain\Bus\Event;
 
 interface EventConfiguration
 {
+    /**
+     * @return mixed[]
+     */
     public function getConfiguration(Event $event, ?EventOptions $eventOptions): array;
 }

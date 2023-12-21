@@ -17,5 +17,8 @@ interface AccountBookRepository
 
     public function findById(Uuid $id): ?AccountBook;
 
+    /**
+     * @return Paginator<AccountBook>
+     */
     public function search(Criteria $criteria): Paginator;
 }

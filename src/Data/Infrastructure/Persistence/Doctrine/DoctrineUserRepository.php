@@ -42,6 +42,9 @@ class DoctrineUserRepository extends DoctrineRepository implements UserRepositor
         return $user;
     }
 
+    /**
+     * @return Paginator<User>
+     */
     public function search(Criteria $criteria): Paginator
     {
         if (!$criteria->hasOrder()) {

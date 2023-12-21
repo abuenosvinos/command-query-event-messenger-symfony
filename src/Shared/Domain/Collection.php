@@ -9,9 +9,16 @@ use Countable;
 use IteratorAggregate;
 use Traversable;
 
-/** @template-implements IteratorAggregate<mixed>*/
+/**
+ * @template TKey
+ * @template TValue
+ * @template-implements IteratorAggregate<mixed>
+ */
 abstract class Collection implements Countable, IteratorAggregate
 {
+    /**
+     * @param array<TKey, TValue> $items
+     */
     public function __construct(private readonly array $items)
     {
         Assert::arrayOf($this->type(), $items);
@@ -29,6 +36,9 @@ abstract class Collection implements Countable, IteratorAggregate
         return \count($this->items());
     }
 
+    /**
+     * @return array<TKey, TValue>
+     */
     protected function items(): array
     {
         return $this->items;

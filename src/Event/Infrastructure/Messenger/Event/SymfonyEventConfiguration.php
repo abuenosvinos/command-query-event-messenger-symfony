@@ -9,10 +9,14 @@ use App\Event\Domain\Bus\Event\EventConfiguration;
 use App\Event\Domain\Bus\Event\EventOptions;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 class SymfonyEventConfiguration implements EventConfiguration
 {
+    /**
+     * @return array<StampInterface>
+     */
     public function getConfiguration(Event $event, ?EventOptions $eventOptions): array
     {
         $stamps = [];

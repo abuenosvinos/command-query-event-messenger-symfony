@@ -11,9 +11,13 @@ use RuntimeException;
 
 abstract class Event extends Request
 {
+    /** @var array<mixed> $data */
     private array $data;
     private string $occurredOn;
 
+    /**
+     * @param array<mixed> $data
+     */
     public function __construct(
         array $data = [],
         Uuid $eventId = null,
@@ -30,6 +34,9 @@ abstract class Event extends Request
         return 'event';
     }
 
+    /**
+     * @return mixed[]
+     */
     public function data(): array
     {
         return $this->data;
@@ -40,7 +47,10 @@ abstract class Event extends Request
         return $this->occurredOn;
     }
 
-    public function __call(string $method, array $args)
+    /**
+     * @param array<mixed> $args
+     */
+    public function __call(string $method, array $args): mixed
     {
         $attributeName = $method;
         if (str_starts_with($method, 'is')) {

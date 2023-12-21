@@ -7,15 +7,19 @@ namespace App\Shared\Application;
 use ArrayIterator;
 use Traversable;
 
+/**
+ * @template T of object
+ */
 class Paginator
 {
+    /** @var ArrayIterator<int, T> */
     private Traversable $results;
     private int $total;
     private int $offset;
     private int $limit;
 
-    /*
-     * @param ArrayIterator<int, mixed> $results
+    /**
+     * @param ArrayIterator<int, T> $results
      */
     public function __construct(Traversable $results, int $total, ?int $offset, ?int $limit)
     {
@@ -25,6 +29,9 @@ class Paginator
         $this->limit = ($limit) ?: $total;
     }
 
+    /**
+     * @return ArrayIterator<int, T>
+     */
     public function results(): Traversable
     {
         return $this->results;

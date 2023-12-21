@@ -19,5 +19,8 @@ interface UserRepository
 
     public function findById(int $id): ?User;
 
+    /**
+     * @return Paginator<User>
+     */
     public function search(Criteria $criteria): Paginator;
 }

@@ -6,6 +6,9 @@ namespace App\Event\Domain\Bus\Event;
 
 class EventOptions
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     private function __construct(private array $options)
     {
     }
@@ -21,11 +24,17 @@ class EventOptions
         return $this->options[$key] ?? null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all(): array
     {
         return $this->options;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public static function fromData(array $options = []): self
     {
         return new self($options);

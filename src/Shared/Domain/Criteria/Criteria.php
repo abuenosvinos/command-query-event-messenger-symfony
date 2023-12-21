@@ -14,6 +14,9 @@ final class Criteria
     ) {
     }
 
+    /**
+     * @param array<int, Filter> $filters
+     */
     public static function fromFilters(array $filters): self
     {
         return new self(
@@ -34,6 +37,9 @@ final class Criteria
         );
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     public function plainFilters(): array
     {
         return $this->filters->filters();

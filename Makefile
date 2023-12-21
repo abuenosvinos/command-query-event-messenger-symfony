@@ -46,10 +46,14 @@ test: ## Run the tests
 
 static-analysis:
 #	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --output-format=github --shepherd
-	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --shepherd --show-info=true
+	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/psalm --shepherd # --show-info=true
 
 lint:
 	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/ecs check
+
+test-architecture:
+#	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php -d memory_limit=4G ./vendor/bin/phpstan analyse --error-format=github
+	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php -d memory_limit=4G ./vendor/bin/phpstan analyse
 
 clean-cache: ## Clear the cache
 	@rm -rf apps/*/*/var

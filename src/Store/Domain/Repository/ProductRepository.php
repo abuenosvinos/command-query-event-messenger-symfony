@@ -19,5 +19,8 @@ interface ProductRepository
 
     public function findById(Uuid $id): ?Product;
 
+    /**
+     * @return Paginator<Product>
+     */
     public function search(Criteria $criteria): Paginator;
 }

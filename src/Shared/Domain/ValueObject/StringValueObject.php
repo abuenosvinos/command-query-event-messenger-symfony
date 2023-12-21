@@ -8,6 +8,11 @@ abstract class StringValueObject
 {
     public function __construct(protected string $value)
     {
+        $this->ensureIsValidUuid($value);
+    }
+
+    private function ensureIsValidUuid(string $id): void
+    {
     }
 
     public function value(): string

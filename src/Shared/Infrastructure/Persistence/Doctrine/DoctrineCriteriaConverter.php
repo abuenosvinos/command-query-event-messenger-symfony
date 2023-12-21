@@ -17,6 +17,10 @@ use Doctrine\ORM\QueryBuilder;
 
 final class DoctrineCriteriaConverter
 {
+    /**
+     * @param array<string> $criteriaToDoctrineFields
+     * @param array<mixed> $hydrators
+     */
     public function __construct(
         private readonly Criteria $criteria,
         private readonly array $criteriaToDoctrineFields = [],
@@ -24,6 +28,10 @@ final class DoctrineCriteriaConverter
     ) {
     }
 
+    /**
+     * @param array<string> $criteriaToDoctrineFields
+     * @param array<mixed> $hydrators
+     */
     public static function applyFilters(
         QueryBuilder $queryBuilder,
         Criteria $criteria,
@@ -46,7 +54,6 @@ final class DoctrineCriteriaConverter
             $expressionsComparison = [];
 
             $plainFilters = $criteria->plainFilters();
-            /** @var Filter $filter */
             foreach ($plainFilters as $filter) {
                 $field = $converter->mapFieldValue($filter->field());
                 $value = $converter->existsHydratorFor($field)
@@ -71,6 +78,10 @@ final class DoctrineCriteriaConverter
         }
     }
 
+    /**
+     * @param array<string> $criteriaToDoctrineFields
+     * @param array<mixed> $hydrators
+     */
     public static function convert(
         Criteria $criteria,
         array $criteriaToDoctrineFields = [],
@@ -115,23 +126,28 @@ final class DoctrineCriteriaConverter
         };
     }
 
-    private function mapFieldValue(FilterField $field): mixed
+    private function mapFieldValue(FilterField $field): string
     {
         return array_key_exists($field->value(), $this->criteriaToDoctrineFields)
             ? $this->criteriaToDoctrineFields[$field->value()]
             : $field->value();
     }
 
+    /**
+     * @return array<string, string>|null
+     */
     private function formatOrder(): ?array
     {
         if (!$this->criteria->hasOrder()) {
             return null;
         }
 
-        return [$this->mapOrderBy($this->criteria->order()->orderBy()) => $this->criteria->order()->orderType()];
+        return [
+            $this->mapOrderBy($this->criteria->order()->orderBy()) => $this->criteria->order()->orderType()->value()
+        ];
     }
 
-    private function mapOrderBy(OrderBy $field): mixed
+    private function mapOrderBy(OrderBy $field): string
     {
         return array_key_exists($field->value(), $this->criteriaToDoctrineFields)
             ? $this->criteriaToDoctrineFields[$field->value()]

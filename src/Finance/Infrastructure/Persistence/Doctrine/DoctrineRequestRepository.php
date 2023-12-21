@@ -34,6 +34,9 @@ class DoctrineRequestRepository extends DoctrineRepository implements RequestRep
         return $item;
     }
 
+    /**
+     * @return Paginator<Request>
+     */
     public function search(Criteria $criteria): Paginator
     {
         if (!$criteria->hasOrder()) {

@@ -8,5 +8,8 @@ interface DomainEventPublisher
 {
     public function publish(Event ...$events): void;
 
+    /**
+     * @return array<Event>
+     */
     public function release(): array;
 }

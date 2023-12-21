@@ -17,5 +17,8 @@ interface RequestRepository
 
     public function findById(Uuid $id): ?Request;
 
+    /**
+     * @return Paginator<Request>
+     */
     public function search(Criteria $criteria): Paginator;
 }

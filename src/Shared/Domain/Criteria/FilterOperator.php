@@ -31,6 +31,7 @@ final class FilterOperator extends Enum
     final public const NOT_IN = 'NIN';
     final public const INSTANCE_OF = 'INSTANCE OF';
 
+    /** @var array|string[] $containing */
     private static array $containing = [self::CONTAINS, self::NOT_CONTAINS];
 
     public function isContaining(): bool

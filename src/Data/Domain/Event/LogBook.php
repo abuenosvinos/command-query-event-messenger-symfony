@@ -6,6 +6,9 @@ use App\Event\Domain\Bus\Event\Event;
 
 class LogBook extends Event
 {
+    /**
+     * @param array<mixed> $data
+     */
     public function __construct(
         private readonly string $action,
         private ?string $email,

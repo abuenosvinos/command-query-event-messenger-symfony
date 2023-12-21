@@ -42,6 +42,9 @@ class DoctrineProductRepository extends DoctrineRepository implements ProductRep
         return $object;
     }
 
+    /**
+     * @return Paginator<Product>
+     */
     public function search(Criteria $criteria): Paginator
     {
         if (!$criteria->hasOrder()) {

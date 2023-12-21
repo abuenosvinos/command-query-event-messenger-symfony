@@ -8,8 +8,12 @@ use App\Shared\Domain\Collection;
 
 use function Lambdish\Phunctional\reduce;
 
+/** @template-extends Collection<int, Filter> */
 final class Filters extends Collection
 {
+    /**
+     * @param array<int, Filter> $values
+     */
     public static function fromValues(array $values): self
     {
         return new self(array_map(self::filterBuilder(), $values));
@@ -25,6 +29,9 @@ final class Filters extends Collection
         return new self(array_merge($this->items(), [$filter]));
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     public function filters(): array
     {
         return $this->items();

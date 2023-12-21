@@ -41,6 +41,9 @@ class DoctrineProductRepository extends DoctrineRepository implements ProductRep
         return $item;
     }
 
+    /**
+     * @return Paginator<Product>
+     */
     public function search(Criteria $criteria): Paginator
     {
         $doctrineCriteria = DoctrineCriteriaConverter::convert($criteria);

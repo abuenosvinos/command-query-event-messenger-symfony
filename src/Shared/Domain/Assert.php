@@ -8,6 +8,9 @@ use InvalidArgumentException;
 
 final class Assert
 {
+    /**
+     * @param array<mixed> $items
+     */
     public static function arrayOf(string $class, array $items): void
     {
         foreach ($items as $item) {

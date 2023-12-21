@@ -16,9 +16,18 @@ interface LogBookRepository
 
     public function findById(int $id): ?LogBook;
 
+    /**
+     * @return array<LogBook>
+     */
     public function findDifferentAction(): array;
 
+    /**
+     * @return array<LogBook>
+     */
     public function findDifferentObjectType(): array;
 
+    /**
+     * @return Paginator<LogBook>
+     */
     public function search(Criteria $criteria): Paginator;
 }

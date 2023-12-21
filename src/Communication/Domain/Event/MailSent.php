@@ -6,6 +6,9 @@ use App\Event\Domain\Bus\Event\Event;
 
 class MailSent extends Event
 {
+    /**
+     * @param array<mixed> $data
+     */
     public function __construct(
         private readonly string $what,
         private readonly ?string $who = null,

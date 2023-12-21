@@ -9,6 +9,7 @@ use App\Event\Domain\Bus\Event\Event;
 
 class SymfonyDomainEventPublisher implements DomainEventPublisher
 {
+    /** @var array<Event> */
     private array $events = [];
 
     public function publish(Event ...$events): void
@@ -18,7 +19,7 @@ class SymfonyDomainEventPublisher implements DomainEventPublisher
 
     public function release(): array
     {
-        $events       = $this->events;
+        $events = $this->events;
         $this->events = [];
 
         return $events;

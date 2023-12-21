@@ -54,6 +54,9 @@ class DoctrineLogBookRepository extends DoctrineRepository implements LogBookRep
         return $query->execute();
     }
 
+    /**
+     * @return Paginator<LogBook>
+     */
     public function search(Criteria $criteria): Paginator
     {
         $doctrineCriteria = DoctrineCriteriaConverter::convert($criteria);

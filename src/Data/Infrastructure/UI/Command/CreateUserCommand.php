@@ -18,10 +18,10 @@ class CreateUserCommand extends Command
 {
     private ?SymfonyStyle $io = null;
 
-    public function __construct(private readonly CommandBus $commandBus)
-    {
-        parent::__construct();
-    }
+//    public function __construct(private readonly CommandBus $commandBus)
+//    {
+//        parent::__construct();
+//    }
 
     protected function configure(): void
     {
