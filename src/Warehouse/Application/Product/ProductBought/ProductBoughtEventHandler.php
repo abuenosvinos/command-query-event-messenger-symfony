@@ -27,8 +27,12 @@ final class ProductBoughtEventHandler implements EventHandler
 
     public function __invoke(ProductBought $event): void
     {
-        /** @var Product $product */
         $product = $this->productRepository->findByCode($event->code());
+
+        if (!$product) {
+            throw new \DomainException("No product found");
+        }
+
         $product->addQuantity($event->quantity());
 
         $criteria = Criteria::fromFilters(
@@ -49,17 +53,28 @@ final class ProductBoughtEventHandler implements EventHandler
         $requests = $this->requestRepository->search($criteria);
         /** @var Request $request */
         foreach ($requests->results() as $request) {
-            if ($request->getQuantity() < $product->getQuantity()) {
-                $product->removeQuantity($request->getQuantity());
-                $request->setStatus(StatusRequest::sent());
-                $this->requestRepository->save($request);
-
-                $this->eventBus->notify(
-                    new ProductSent($event->code(), $request->getQuantity())
-                );
-            }
+            $this->sendProduct($request, $product, $event);
         }
 
         $this->productRepository->save($product);
+    }
+
+    /**
+     * @param Request $request
+     * @param Product $product
+     * @param ProductBought $event
+     * @return void
+     */
+    public function sendProduct(Request $request, Product $product, ProductBought $event): void
+    {
+        if ($request->getQuantity() < $product->getQuantity()) {
+            $product->removeQuantity($request->getQuantity());
+            $request->setStatus(StatusRequest::sent());
+            $this->requestRepository->save($request);
+
+            $this->eventBus->notify(
+                new ProductSent($event->code(), $request->getQuantity())
+            );
+        }
     }
 }

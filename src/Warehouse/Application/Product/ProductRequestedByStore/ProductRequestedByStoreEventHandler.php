@@ -7,6 +7,7 @@ namespace App\Warehouse\Application\Product\ProductRequestedByStore;
 use App\Event\Domain\Bus\Event\EventBus;
 use App\Event\Domain\Bus\Event\EventHandler;
 use App\Store\Domain\Event\Product\ProductNeededInStore;
+use App\Warehouse\Domain\Entity\Product;
 use App\Warehouse\Domain\Entity\Request;
 use App\Warehouse\Domain\Event\Product\ProductNeededInWarehouse;
 use App\Warehouse\Domain\Event\Product\ProductSent;
@@ -36,22 +37,32 @@ final class ProductRequestedByStoreEventHandler implements EventHandler
         $request->setQuantity($event->quantity());
 
         if ($product->getQuantity() > $event->quantity()) {
-            $product->removeQuantity($event->quantity());
-            $this->productRepository->save($product);
-
-            $request->setStatus(StatusRequest::sent());
-            $this->requestRepository->save($request);
-
-            $this->eventBus->notify(
-                new ProductSent($event->code(), $event->quantity())
-            );
+            $this->sendProduct($product, $event, $request);
         } else {
-            $request->setStatus(StatusRequest::pending());
-            $this->requestRepository->save($request);
-
-            $this->eventBus->notify(
-                new ProductNeededInWarehouse($event->code(), $event->quantity())
-            );
+            $this->needProduct($request, $event);
         }
+    }
+
+    private function sendProduct(Product $product, ProductNeededInStore $event, Request $request): void
+    {
+        $product->removeQuantity($event->quantity());
+        $this->productRepository->save($product);
+
+        $request->setStatus(StatusRequest::sent());
+        $this->requestRepository->save($request);
+
+        $this->eventBus->notify(
+            new ProductSent($event->code(), $event->quantity())
+        );
+    }
+
+    private function needProduct(Request $request, ProductNeededInStore $event): void
+    {
+        $request->setStatus(StatusRequest::pending());
+        $this->requestRepository->save($request);
+
+        $this->eventBus->notify(
+            new ProductNeededInWarehouse($event->code(), $event->quantity())
+        );
     }
 }

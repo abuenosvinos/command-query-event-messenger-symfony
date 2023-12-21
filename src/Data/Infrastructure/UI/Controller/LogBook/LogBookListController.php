@@ -3,6 +3,7 @@
 namespace App\Data\Infrastructure\UI\Controller\LogBook;
 
 use App\Data\Application\ListLogBook\ListLogBookQuery;
+use App\Data\Domain\Event\LogBook;
 use App\Event\Domain\Bus\Query\QueryBus;
 use App\Shared\Application\Paginator;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,7 @@ class LogBookListController
 
     public function index(Environment $twig): Response
     {
-        /** @var Paginator $results */
+        /** @var Paginator<LogBook> $results */
         $results = $this->queryBus->ask(new ListLogBookQuery());
 
         return new Response(

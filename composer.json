@@ -57,6 +57,7 @@
         "ext-xdebug": "*",
         "behat/behat": "^3.13",
         "phpat/phpat": "^0.10.11",
+        "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9.5",
         "psalm/plugin-mockery": "^1.1",

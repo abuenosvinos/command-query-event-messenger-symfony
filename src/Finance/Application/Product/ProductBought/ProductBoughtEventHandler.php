@@ -25,20 +25,22 @@ final class ProductBoughtEventHandler implements EventHandler
     {
         $product = $this->productRepository->findByCode($event->code());
 
-        $criteria = Criteria::fromFilters(
-            [
-                Filter::fromValues([
-                    'field' => 'product',
-                    'operator' => '=',
-                    'value' => $product
-                ]),
-                Filter::fromValues([
-                    'field' => 'status.value',
-                    'operator' => '=',
-                    'value' => StatusRequest::PENDING
-                ])
-            ]
-        );
+        if (!$product) {
+            throw new \DomainException("No product found");
+        }
+
+        $criteria = Criteria::fromFilters([
+            Filter::fromValues([
+                'field' => 'product',
+                'operator' => '=',
+                'value' => $product
+            ]),
+            Filter::fromValues([
+                'field' => 'status.value',
+                'operator' => '=',
+                'value' => StatusRequest::PENDING
+            ])
+        ]);
 
         $requests = $this->requestRepository->search($criteria);
         /** @var Request $request */

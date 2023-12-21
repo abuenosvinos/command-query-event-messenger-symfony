@@ -24,11 +24,24 @@ class LogBookEventHandler implements EventHandler
         $logBook->setOccurredOn(new \DateTime($event->occurredOn()));
         $logBook->setObjectType($event->objectType());
         $logBook->setObjectId($event->objectId());
+        $this->setMetadata($logBook, $event);
+        $this->setUser($logBook, $event);
+
+        $this->logBookRepository->save(
+            $logBook
+        );
+    }
+
+    private function setMetadata(LogBook $logBook, LogBookEvent $event): void
+    {
         $data = $event->data();
         if (count($data) > 0) {
             $logBook->setMetadata(json_encode($data));
         }
+    }
 
+    public function setUser(LogBook $logBook, LogBookEvent $event): void
+    {
         $email = $event->email();
         if ($email !== null) {
             $user = $this->userRepository->findByEmail(EmailAddress::create($email));
@@ -36,9 +49,5 @@ class LogBookEventHandler implements EventHandler
                 $logBook->setUser($user);
             }
         }
-
-        $this->logBookRepository->save(
-            $logBook
-        );
     }
 }

@@ -36,18 +36,49 @@ class SymfonyEventConfiguration implements EventConfiguration
         */
 
 
+        $stamps = $this->getRoutingOptions($eventOptions, $stamps);
+        $stamps = $this->getTransportOptions($eventOptions, $stamps);
+        $stamps = $this->getDelayOptions($eventOptions, $stamps);
+
+        return $stamps;
+    }
+
+    /**
+     * @param EventOptions $eventOptions
+     * @param array<StampInterface> $stamps
+     * @return array<StampInterface>
+     */
+    public function getRoutingOptions(EventOptions $eventOptions, array $stamps): array
+    {
         if (is_string($eventOptions->get('routing'))) {
             $stamps[] = new AmqpStamp($eventOptions->get('routing'));
         }
+        return $stamps;
+    }
 
+    /**
+     * @param EventOptions $eventOptions
+     * @param array<StampInterface> $stamps
+     * @return array<StampInterface>
+     */
+    public function getTransportOptions(EventOptions $eventOptions, array $stamps): array
+    {
         if (is_array($eventOptions->get('transport'))) {
             $stamps[] = new TransportNamesStamp($eventOptions->get('transport'));
         }
+        return $stamps;
+    }
 
+    /**
+     * @param EventOptions $eventOptions
+     * @param array<StampInterface> $stamps
+     * @return array<StampInterface>
+     */
+    public function getDelayOptions(EventOptions $eventOptions, array $stamps): array
+    {
         if (is_int($eventOptions->get('delay'))) {
             $stamps[] = new DelayStamp($eventOptions->get('delay'));
         }
-
         return $stamps;
     }
 }

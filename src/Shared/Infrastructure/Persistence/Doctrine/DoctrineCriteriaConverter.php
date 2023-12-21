@@ -7,13 +7,11 @@ namespace App\Shared\Infrastructure\Persistence\Doctrine;
 use App\Shared\Domain\Criteria\Criteria;
 use App\Shared\Domain\Criteria\Filter;
 use App\Shared\Domain\Criteria\FilterField;
-use App\Shared\Domain\Criteria\FilterOperator;
 use App\Shared\Domain\Criteria\OrderBy;
+use App\Shared\Domain\Criteria\OrderType;
 use Doctrine\Common\Collections\Criteria as DoctrineCriteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
-use Doctrine\Common\Collections\Expr\Value;
-use Doctrine\ORM\QueryBuilder;
 
 final class DoctrineCriteriaConverter
 {
@@ -26,56 +24,6 @@ final class DoctrineCriteriaConverter
         private readonly array $criteriaToDoctrineFields = [],
         private readonly array $hydrators = []
     ) {
-    }
-
-    /**
-     * @param array<string> $criteriaToDoctrineFields
-     * @param array<mixed> $hydrators
-     */
-    public static function applyFilters(
-        QueryBuilder $queryBuilder,
-        Criteria $criteria,
-        array $criteriaToDoctrineFields = [],
-        array $hydrators = [],
-    ): void {
-
-        $converter = new self($criteria, $criteriaToDoctrineFields, $hydrators);
-
-        $queryBuilder->addCriteria(
-            new DoctrineCriteria(
-                null,
-                $converter->formatOrder(),
-                $criteria->offset(),
-                $criteria->limit()
-            )
-        );
-
-        if ($criteria->hasFilters()) {
-            $expressionsComparison = [];
-
-            $plainFilters = $criteria->plainFilters();
-            foreach ($plainFilters as $filter) {
-                $field = $converter->mapFieldValue($filter->field());
-                $value = $converter->existsHydratorFor($field)
-                    ? $converter->hydrate($field, $filter->value()->value())
-                    : $filter->value()->value();
-                if (in_array($filter->operator()->value(), [FilterOperator::INSTANCE_OF])) {
-                    $expression = new Value(sprintf('%s %s %s', $field, $filter->operator()->value(), $value));
-                    $queryBuilder->addCriteria(new DoctrineCriteria($expression));
-                } else {
-                    $expressionsComparison[] = new Comparison($field, $filter->operator()->value(), $value);
-                }
-            }
-
-            if (count($expressionsComparison) > 0) {
-                $queryBuilder->addCriteria(new DoctrineCriteria(
-                    new CompositeExpression(
-                        CompositeExpression::TYPE_AND,
-                        $expressionsComparison
-                    )
-                ));
-            }
-        }
     }
 
     /**
@@ -95,19 +43,19 @@ final class DoctrineCriteriaConverter
     private function convertToDoctrineCriteria(): DoctrineCriteria
     {
         return new DoctrineCriteria(
-            $this->buildExpression(),
-            $this->formatOrder(),
+            $this->buildExpression($this->criteria),
+            $this->formatOrder($this->criteria),
             $this->criteria->offset(),
             $this->criteria->limit()
         );
     }
 
-    private function buildExpression(): ?CompositeExpression
+    private function buildExpression(Criteria $criteria): ?CompositeExpression
     {
-        if ($this->criteria->hasFilters()) {
+        if ($criteria->hasFilters()) {
             return new CompositeExpression(
                 CompositeExpression::TYPE_AND,
-                array_map($this->buildComparison(), $this->criteria->plainFilters())
+                array_map($this->buildComparison(), $criteria->plainFilters())
             );
         }
 
@@ -136,14 +84,14 @@ final class DoctrineCriteriaConverter
     /**
      * @return array<string, string>|null
      */
-    private function formatOrder(): ?array
+    private function formatOrder(Criteria $criteria): ?array
     {
-        if (!$this->criteria->hasOrder()) {
+        if (!$criteria->hasOrder()) {
             return null;
         }
 
         return [
-            $this->mapOrderBy($this->criteria->order()->orderBy()) => $this->criteria->order()->orderType()->value()
+            $this->mapOrderBy($criteria->order()->orderBy()) => $criteria->order()->orderType()->value()
         ];
     }
 

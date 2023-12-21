@@ -55,6 +55,10 @@ test-architecture:
 #	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php -d memory_limit=4G ./vendor/bin/phpstan analyse --error-format=github
 	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) php -d memory_limit=4G ./vendor/bin/phpstan analyse
 
+mess-detector:
+#	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/phpmd src,tests github phpmd.xml
+	docker exec  -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./vendor/bin/phpmd src,tests text phpmd.xml
+
 clean-cache: ## Clear the cache
 	@rm -rf apps/*/*/var
 	@docker exec -w /var/www/html/ -t --user $(id -u):$(id -g) $(PHP_CONTAINER) ./bin/console cache:warmup

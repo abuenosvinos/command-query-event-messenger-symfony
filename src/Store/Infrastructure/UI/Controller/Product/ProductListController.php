@@ -5,6 +5,7 @@ namespace App\Store\Infrastructure\UI\Controller\Product;
 use App\Event\Domain\Bus\Query\QueryBus;
 use App\Shared\Application\Paginator;
 use App\Store\Application\Product\ListProducts\ListProductsQuery;
+use App\Store\Domain\Entity\Product;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
@@ -16,7 +17,7 @@ class ProductListController
 
     public function index(Environment $twig): Response
     {
-        /** @var Paginator $results */
+        /** @var Paginator<Product> $results */
         $results = $this->queryBus->ask(new ListProductsQuery());
 
         return new Response(
