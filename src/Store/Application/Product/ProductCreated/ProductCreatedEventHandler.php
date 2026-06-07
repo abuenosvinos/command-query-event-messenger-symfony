@@ -24,7 +24,6 @@ final class ProductCreatedEventHandler implements EventHandler
         $product = new Product();
         $product->setCode($event->code());
         $product->setPrice($event->salePrice());
-
         $this->productRepository->save($product);
 
         $this->eventBus->notify(

@@ -1,0 +1,51 @@
+{
+    "vhosts": [
+      { "name": "/" }
+    ],
+    "users": [
+      {
+        "name": "rabbitmq",
+        "password": "rabbitmq",
+        "tags": "administrator"
+      }
+    ],
+    "permissions": [
+      {
+        "user": "rabbitmq",
+        "vhost": "/",
+        "configure": ".*",
+        "write": ".*",
+        "read": ".*"
+      }
+    ],
+    "exchanges": [
+      {
+        "name": "exchange_async_dead_letter",
+        "vhost": "/",
+        "type": "topic",
+        "durable": true,
+        "auto_delete": false,
+        "internal": false,
+        "arguments": {}
+      }
+    ],
+    "queues": [
+      {
+        "name": "dead_letter_queue",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {}
+      }
+    ],
+    "bindings": [
+      {
+        "source": "exchange_async_dead_letter",
+        "vhost": "/",
+        "destination": "dead_letter_queue",
+        "destination_type": "queue",
+        "routing_key": "dead_letter",
+        "arguments": {}
+      }
+    ]
+  }

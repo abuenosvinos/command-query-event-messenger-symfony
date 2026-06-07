@@ -1,15 +1,34 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
-
+        - bus # Events are logged in the dedicated "event" channel when it exists
 when@dev:
     monolog:
         handlers:
+            messenger_all:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.messenger.log"
+                level: debug
+                channels: ["messenger"]
+                max_files: 10
+            
+            # only WARNING and above
+            messenger_warning_plus:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.messenger-warning+.log"
+                level: warning
+                channels: ["messenger"]
+                max_files: 5
             main:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                channels: ["!event"]
+                channels: ["!event", "!bus", "!messenger"]    
+            bus:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.bus.log"
+                level: debug
+                channels: ["bus"]
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
@@ -21,7 +40,7 @@ when@dev:
             console:
                 type: console
                 process_psr_3_messages: false
-                channels: ["!event", "!doctrine", "!console"]
+                channels: ["!event", "!bus", "!doctrine", "!console"]
 
 when@test:
     monolog:
@@ -31,7 +50,7 @@ when@test:
                 action_level: error
                 handler: nested
                 excluded_http_codes: [404, 405]
-                channels: ["!event"]
+                channels: ["!event", "!bus"]
             nested:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
@@ -40,11 +59,25 @@ when@test:
 when@prod:
     monolog:
         handlers:
+            messenger_all:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.messenger.log"
+                level: debug
+                channels: ["messenger"]
+                max_files: 10
+            
+            # only WARNING and above
+            messenger_warning_plus:
+                type: rotating_file
+                path: "%kernel.logs_dir%/%kernel.environment%.messenger-warning+.log"
+                level: warning
+                channels: ["messenger"]
+                max_files: 5
             tmp:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                channels: ["!event"]
+                channels: ["!event", "!bus", "!messenger"]
             main:
                 type: fingers_crossed
                 action_level: error
@@ -59,7 +92,7 @@ when@prod:
             console:
                 type: console
                 process_psr_3_messages: false
-                channels: ["!event", "!doctrine"]
+                channels: ["!event", "!bus", "!doctrine", "!messenger"]
             deprecation:
                 type: stream
                 channels: [deprecation]

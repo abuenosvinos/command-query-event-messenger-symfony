@@ -53,13 +53,27 @@ framework:
                     max_retries: 3
                     # milliseconds delay
                     delay: 1000
-                    # causes the delay to be higher before each retry
-                    # e.g. 1 second delay, 2 seconds, 4 seconds
                     multiplier: 2
                     max_delay: 0
-                    # override all of this with a service that
-                    # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
-                    # service: null
+            
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_ASYNC_DSN)%'
+                options:
+                    auto_setup: true
+                    exchange:
+                        name: exchange_failed
+                        type: topic
+                        default_publish_routing_key: failed
+                    queues:
+                        queue_failed:
+                            binding_keys: ['#']
+                            arguments:
+                                x-dead-letter-exchange: exchange_async_dead_letter
+                                x-dead-letter-routing-key: 'dead_letter'
+                retry_strategy:
+                    max_retries: 0
+                # No retry_strategy here : we do not try automatically from the DLQ
+                # The replay is MANUAL and controlled
             #sync: 'sync://'
             sync:
                 dsn: '%env(MESSENGER_TRANSPORT_SYNC_DSN)%'
@@ -74,11 +88,7 @@ framework:
             # https://github.com/symfony/symfony/issues/42857
             # https://github.com/symfony/symfony/pull/38433
             notifications: 'sync://'
-            failed:
-                dsn: '%env(MESSENGER_TRANSPORT_FAILED_DSN)%'
-                options:
-                    auto_setup: true
-                    queue_name: failed
+            
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: notifications
@@ -94,6 +104,7 @@ framework:
                 middleware:
                     - validation
                     - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
+                    - App\Event\Infrastructure\Messenger\Middleware\DomainExceptionClassifierMiddleware
                     #- App\Event\Infrastructure\Messenger\Middleware\DispatchEvents
                     - dispatch_after_current_bus # https://symfony.com/doc/current/messenger/dispatch_after_current_bus.html
                     - doctrine_transaction
@@ -102,6 +113,7 @@ framework:
                 middleware:
                     - validation
                     - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
+                    - App\Event\Infrastructure\Messenger\Middleware\DomainExceptionClassifierMiddleware
                     #- App\Event\Infrastructure\Messenger\Middleware\DispatchEvents
 
             event.bus:
@@ -111,3 +123,4 @@ framework:
                     - router_context # if you need to generate absolute URLs in the consumer (e.g. render a template with links, emails)
                     - validation
                     - App\Event\Infrastructure\Messenger\Middleware\MessageLoggerMiddleware
+                    - App\Event\Infrastructure\Messenger\Middleware\DomainExceptionClassifierMiddleware

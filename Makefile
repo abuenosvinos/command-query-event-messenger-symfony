@@ -1,4 +1,5 @@
 PHP_CONTAINER := cqe_php_817
+PHP_WORKER := cqe_worker
 
 .PHONY: help
 help: ## show make targets
@@ -68,3 +69,15 @@ start: ## Start the services
 
 stop: ## Stop the services
 	@docker compose -f docker/docker-compose.yml down
+
+sh: ## Open a shell in the PHP container  (make sh)
+	@docker compose -f docker/docker-compose.yml exec $(PHP_CONTAINER) sh
+
+bash: ## Open a bash session in the PHP container  (make bash)
+	@docker compose -f docker/docker-compose.yml exec $(PHP_CONTAINER) bash
+
+bash-worker: ## Open a bash session in the worker container  (make bash-worker)
+	@docker compose -f docker/docker-compose.yml exec $(PHP_WORKER) bash
+
+supervisor_worker: ## Open a supervisorctl session in the worker container  (make supervisor_worker)
+	@docker compose -f docker/docker-compose.yml exec $(PHP_WORKER) /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf

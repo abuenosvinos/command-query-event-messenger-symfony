@@ -19,7 +19,6 @@ final class ProductAddedEventHandler implements EventHandler
     {
         $product = new Product();
         $product->setCode($event->code());
-
         $this->productRepository->save($product);
     }
 }

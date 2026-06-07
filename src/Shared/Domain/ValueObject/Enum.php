@@ -63,7 +63,7 @@ abstract class Enum
 
     public function equals(Enum $other): bool
     {
-        return $other === $this;
+        return get_class($other) === get_class($this) && $other->value() === $this->value();
     }
 
     public function __toString(): string

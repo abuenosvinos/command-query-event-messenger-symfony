@@ -12,11 +12,11 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 
 final class MessageLoggerMiddleware implements MiddlewareInterface
 {
-    private LoggerInterface $logger;
+    private LoggerInterface $busLogger;
 
-    public function __construct(LoggerInterface $messengerLogger)
+    public function __construct(LoggerInterface $busLogger)
     {
-        $this->logger = $messengerLogger;
+        $this->busLogger = $busLogger;
     }
 
     /**
@@ -30,7 +30,7 @@ final class MessageLoggerMiddleware implements MiddlewareInterface
         $request = $envelope->getMessage();
 
         if ($request instanceof Request) {
-            $this->logger->debug(
+            $this->busLogger->debug(
                 'New message dispatched',
                 [
                     'type' => $request->requestType(),

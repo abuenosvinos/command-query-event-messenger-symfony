@@ -1,78 +1,108 @@
-version: '3'
+version: "3"
 services:
+  mysql:
+    container_name: cqe_mysql
+    image: mysql:5.7
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=root
+    command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" --default-authentication-plugin=mysql_native_password
+    volumes:
+      - cqe_mysql:/var/lib/mysql
 
-    mysql:
-      container_name: cqe_mysql
-      image: mysql:5.7
-      ports:
-        - "3306:3306"
-      environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_DATABASE=root
-      command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" --default-authentication-plugin=mysql_native_password
-      volumes:
-        - cqe_mysql:/var/lib/mysql
+  cqe_nginx:
+    container_name: cqe_nginx
+    build: ../docker/nginx
+    volumes:
+      - ..:/var/www/html
+      - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ../docker/nginx/sites/:/etc/nginx/sites-available
+      - ../docker/nginx/conf.d/:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - cqe_php_817
 
-    cqe_nginx:
-      container_name: cqe_nginx
-      build: ../docker/nginx
-      volumes:
-        - ..:/var/www/html
-        - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-        - ../docker/nginx/sites/:/etc/nginx/sites-available
-        - ../docker/nginx/conf.d/:/etc/nginx/conf.d
-      ports:
-        - "80:80"
-        - "443:443"
-      depends_on:
-        - cqe_php_817
+  cqe_php_817:
+    container_name: cqe_php_817
+    build: ../docker/php_817
+    user: ${UID}:${GID}
+    working_dir: /var/www/html
+    environment:
+      # Available modes: debug | profile | debug,profile | off
+      # Override xdebug.mode without rebuilding the image.
+      XDEBUG_MODE: profile
+      # output_dir for cachegrind files (profiling).
+      # The var/xdebug/ directory is mounted in the volume → accessible from the host.
+      XDEBUG_CONFIG: "output_dir=/var/www/html/var/xdebug start_with_request=trigger"
+    volumes:
+      - ..:/var/www/html
+      - ../docker/php_817/php.ini:/usr/local/etc/php/php.ini:ro
+      - ../docker/php_817/supervisor/messenger-worker.conf:/etc/supervisor/conf.d/messenger-worker.conf
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-    cqe_php_817:
-      container_name: cqe_php_817
-      build: ../docker/php_817
-      user: ${UID}:${GID}
-      working_dir: /var/www/html
-      volumes:
-        - ..:/var/www/html
-        - ../docker/php_817/php.ini:/usr/local/etc/php/php.ini:ro
-        - ../docker/php_817/supervisor/messenger-worker.conf:/etc/supervisor/conf.d/messenger-worker.conf
-      extra_hosts:
-        - "host.docker.internal:host-gateway"
+  cqe_worker:
+    container_name: cqe_worker
+    build: ../docker/php_817
+    working_dir: /var/www/html
+    depends_on:
+      - rabbit
+    volumes:
+      - ..:/var/www/html
+      - ../docker/php_817/php.ini:/usr/local/etc/php/php.ini:ro
+      - ../docker/php_817/supervisor/supervisord.conf:/etc/supervisor/supervisord.conf:ro
+      - ../docker/php_817/supervisor/messenger-worker.conf:/etc/supervisor/conf.d/messenger-worker.conf:ro 
 
-    # https://docs.redis.com/latest/ri/installing/install-docker/
-    redisinsight:
-      container_name: cqe_redisinsight
-      image: redislabs/redisinsight:latest
-      ports:
-        - "8001:8001"
-      volumes:
-        - redisinsight:/db
+  webgrind:
+    container_name: cqe_webgrind
+    image: jokkedk/webgrind:latest
+    platform: linux/amd64
+    volumes:
+      # Mount only the cachegrind files directory to /tmp (default directory read by webgrind)
+      - ../var/xdebug:/tmp
+    ports:
+      - "9000:80"
 
-    redis:
-      container_name: cqe_redis
-      image: redis
-      ports:
-        - "6379:6379"
-      volumes:
-        - cache:/data
+  # https://docs.redis.com/latest/ri/installing/install-docker/
+  redisinsight:
+    container_name: cqe_redisinsight
+    image: redislabs/redisinsight:latest
+    ports:
+      - "8001:8001"
+    volumes:
+      - redisinsight:/db
 
-    rabbit:
-      container_name: cqe_rabbit
-      build: ../docker/rabbitmq
-      hostname: "rabbit"
-      environment:
-        RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-        RABBITMQ_DEFAULT_USER: "rabbitmq"
-        RABBITMQ_DEFAULT_PASS: "rabbitmq"
-        RABBITMQ_DEFAULT_VHOST: "/"
-      ports:
-        - "15672:15672"
-        - "5672:5672"
-      labels:
-        NAME: "rabbitmq1"
-      volumes:
-        - "../docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
+  redis:
+    container_name: cqe_redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
 
+  rabbit:
+    container_name: cqe_rabbit
+    build: ../docker/rabbitmq
+    hostname: "rabbit"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+    volumes:
+      - "../docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"
+      - "../docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro"
+      - "../docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro"
 volumes:
   cqe_mysql: {}
   redisinsight:
